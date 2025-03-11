@@ -1,0 +1,65 @@
+!pip install spotipy --upgrade
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
+import random
+
+# Client ID, Client Secret and Credentials
+cid = '45a49063337f42ea8e24b7bdca0ef3d3'
+secret = '6951f61bfe5a45e69fd3652825c6b06e'
+client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
+sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+# Mapping of Mood to Playlist URIs
+mood_playlists = {
+    "happy": "spotify:playlist:37i9dQZF1DXdPec7aLTmlC",
+    "cheerful": "spotify:playlist:37i9dQZF1EIcqv6dNT3Dgk",
+    "euphoric": "spotify:playlist:37i9dQZF1EIduZhe5fCMGD",
+    "energetic": "spotify:playlist:37i9dQZF1DX0BcQWzuB7ZO",
+    "sad": "spotify:playlist:37i9dQZF1DX7qK8ma5wgG1",
+    "anxious": "spotify:playlist:37i9dQZF1EIXSfBC0DqeaW",
+    "stressed": "spotify:playlist:37i9dQZF1EIdEbtcbwjUsw",
+    "lonely": "spotify:playlist:37i9dQZF1EIhrfJdOCmxe4",
+    "bored": "spotify:playlist:29N6aFhJPqFCMbawXTlEbG",
+    "calm": "spotify:playlist:37i9dQZF1DWZd79rJ6a7lp",
+    "serene": "spotify:playlist:37i9dQZF1EIhnGUyOEDCHI",
+    "sleepy": "spotify:playlist:37i9dQZF1EIfqMuHDHBmcS",
+    "nostalgic": "spotify:playlist:37i9dQZF1EIhj2zUFUJqG1",
+    "romantic": "spotify:playlist:37i9dQZF1EVGJJ3r00UGAt",
+    "grateful": "spotify:playlist:33sogyr2Ew1cbH2YcgLJCn"
+}
+
+mood = input("""What is your current mood?
+- happy
+- cheerful
+- euphoric
+- energetic
+- sad
+- anxious
+- stressed
+- lonely
+- bored
+- calm
+- serene
+- sleepy
+- nostalgic
+- romantic
+- grateful
+Enter your mood: """).lower()
+
+playlist_uri = mood_playlists.get(mood)
+if not playlist_uri:
+    print("Invalid mood selected.")
+    exit()
+
+try:
+    results = sp.playlist_tracks(playlist_uri)
+    tracks = results['items']
+
+    # Select 8 random songs from the mapped playlist
+    selected_tracks = random.sample(tracks, min(8, len(tracks)))
+
+    print("\nHere's your curated playlist:")
+    for track in selected_tracks:
+        print(f"- {track['track']['name']}, {track['track']['artists'][0]['name']}: https://open.spotify.com/track/{track['track']['id']}")
+except Exception as e:    
+    print(f"Error: {e}")
